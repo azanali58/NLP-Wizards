@@ -34,8 +34,23 @@ def get_vector_store(text_chunks):
     vector_store = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
     return vector_store
 
+def get_conversation_chain(vector_store):
+    llm = ChatOpenAI(model="gpt-3.5-turbo")
+    memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
+    conversation_chain = ConversationalRetrievalChain.from_llm(
+        llm=llm,
+        retriever=vector_store.as_retriever(),
+        memory=memory
+    )
+    return conversation_chain
+
 def main():
     load_dotenv()
+
+    if "conversation" not in st.session_state:
+        st.session_state.conversation = None
+
+    
     st.set_page_config(
         page_title="NLP Wizard Chatbot",
         layout="wide",
@@ -59,6 +74,10 @@ def main():
 
                 # get vector store using embeddings
                 vector_store = get_vector_store(text_chunks)
+
+                # create conversation chain
+                st.session_state.conversation = get_conversation_chain(vector_store)
+
 
 
 
