@@ -44,20 +44,38 @@ def get_conversation_chain(vector_store):
     )
     return conversation_chain
 
+def handle_user_input(user_question):
+    response = st.session_state.conversation({"question": user_question})
+    st.session_state.chat_history = response['chat_history']
+
+    for i, message in enumerate(st.session_state.chat_history):
+        if i % 2 == 0:
+            with st.chat_message(name="user", avatar="👦"):
+                st.write(message.content)
+        else:
+            with st.chat_message(name="assistant", avatar="🤖"):
+                st.write(message.content)
+
 def main():
     load_dotenv()
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
-
     
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = None
+
+
     st.set_page_config(
         page_title="NLP Wizard Chatbot",
         layout="wide",
         initial_sidebar_state="expanded"
     )
     st.header(body="NLP Wizard Chatbot 🤖")
-    st.chat_input(placeholder="Ask a question about your meeting transcript(s).")
+    
+    user_question = st.chat_input(placeholder="Ask a question about your meeting transcript(s).")
+    if user_question:
+        handle_user_input(user_question)
 
     with st.sidebar:
         st.subheader("Your transcript(s)")
