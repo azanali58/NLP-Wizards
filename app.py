@@ -29,6 +29,11 @@ def get_text_chunks(text):
     return chunks
 
 
+def get_vector_store(text_chunks):
+    embeddings = OpenAIEmbeddings()
+    vector_store = FAISS.from_texts(texts=text_chunks, embedding=embeddings)
+    return vector_store
+
 def main():
     load_dotenv()
     st.set_page_config(
@@ -51,6 +56,9 @@ def main():
 
                 # get text chunks
                 text_chunks = get_text_chunks(raw_text)
+
+                # get vector store using embeddings
+                vector_store = get_vector_store(text_chunks)
 
 
 
