@@ -84,6 +84,21 @@ def handle_user_input(user_question):
         else:
             with st.chat_message(name="assistant", avatar="🤖"):
                 st.write(message.content)
+    get_responses(message.content, end-start)
+
+    def get_responses(response, duration, model='gpt-4'):
+        fpath = './data/responses.csv'
+        cols = ['response', 'duration', 'model']
+
+        if not os.path.exists(fpath):
+            with open(fpath, 'w', encoding='utf-8', newline='') as file:
+                writer = csv.DictWriter(file, fieldnames=cols)
+                writer.writeheader()
+
+        with open(fpath, 'a', newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=cols)
+            writer.writerow({"response": response, "duration": duration, "model": model})
+
 
 def main():
     load_dotenv()
