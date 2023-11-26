@@ -10,6 +10,16 @@ from langchain.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
+def get_transcript(audio_file):
+    client = OpenAI()
+    with open(audio_file, 'rb') as audio_file:
+        transcript = client.audio.transcriptions.create(
+        model="whisper-1", 
+        file=audio_file
+        )
+    return transcript.text
+
+
 def get_pdf_text(pdf_docs):
     text = ""
     for pdf in pdf_docs:
