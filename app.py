@@ -1,3 +1,6 @@
+import os
+import time
+import openai
 import streamlit as st
 
 from dotenv import load_dotenv
@@ -11,7 +14,7 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
 def get_transcript(audio_file):
-    client = OpenAI()
+    client = openai()
     with open(audio_file, 'rb') as audio_file:
         transcript = client.audio.transcriptions.create(
         model="whisper-1", 
@@ -55,7 +58,10 @@ def get_conversation_chain(vector_store):
     return conversation_chain
 
 def handle_user_input(user_question):
+    start = time.time()
     response = st.session_state.conversation({"question": user_question})
+    end = time.time()
+    
     st.session_state.chat_history = response['chat_history']
 
     for i, message in enumerate(st.session_state.chat_history):
@@ -90,16 +96,18 @@ def main():
     with st.sidebar:
         st.subheader("Your transcript(s)")
         pdf_docs = st.file_uploader("Upload your transcript PDFs here and click 'Process'", accept_multiple_files=True)
-        
+      
+
+
         if st.button("Process"):
             with st.spinner("Processing"):
-
+            
                 # get pdf text
                 raw_text = get_pdf_text(pdf_docs)
 
                 # get text chunks
                 text_chunks = get_text_chunks(raw_text)
-
+               
                 # get vector store using embeddings
                 vector_store = get_vector_store(text_chunks)
 
