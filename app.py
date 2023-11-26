@@ -13,6 +13,14 @@ from langchain.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
 
+
+
+def process_audio_file(audio_file):
+    file_path = os.path.join("./", "uploaded_audio.mp3")
+    with open(file_path, 'wb') as result:
+        result.write(audio_file.read())
+    return file_path
+
 def get_transcript(audio_file):
     client = openai()
     with open(audio_file, 'rb') as audio_file:
@@ -113,6 +121,7 @@ def main():
                         transcript.append(get_transcript(file_path))
                 # get pdf text
                 raw_text = get_pdf_text(pdf_docs)
+
 
                 # get text chunks
                 text_chunks = get_text_chunks(raw_text)
