@@ -137,13 +137,16 @@ def main():
             
                 # get combined transcript
                 transcript = []
-                for file_path in file_paths:
-                    transcript.append(get_transcript(file_path))
+                if audio_files:
+                    for file_path in file_paths:
+                        transcript.append(get_transcript(file_path))
                 
                 
                 # get pdf text
-                raw_text = get_pdf_text(pdf_docs)
-                transcript.append(raw_text)
+                if pdf_docs:
+                    raw_text = get_pdf_text(pdf_docs)
+                    transcript.append(raw_text)
+                
                 # delete local copies
                 for file_path in file_paths:
                     delete_temp_file(file_path)
