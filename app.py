@@ -21,6 +21,11 @@ def process_audio_file(audio_file):
         result.write(audio_file.read())
     return file_path
 
+
+def delete_temp_file(file_path):
+    if file_path and os.path.exists(file_path):
+        os.remove(file_path)
+
 def get_transcript(audio_file):
     client = openai()
     with open(audio_file, 'rb') as audio_file:
@@ -122,6 +127,9 @@ def main():
                 # get pdf text
                 raw_text = get_pdf_text(pdf_docs)
 
+                # delete local copies
+                for file_path in file_paths:
+                    delete_temp_file(file_path)
 
                 # get text chunks
                 text_chunks = get_text_chunks(raw_text)
