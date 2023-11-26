@@ -4,6 +4,7 @@ import streamlit as st
 
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
+from openai import OpenAI
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.chat_models import ChatOpenAI
 from langchain.embeddings import OpenAIEmbeddings
@@ -26,7 +27,7 @@ def delete_temp_file(file_path):
         os.remove(file_path)
 
 def get_transcript(audio_file):
-    client = openai()
+    client = OpenAI()
     with open(audio_file, 'rb') as audio_file:
         transcript = client.audio.transcriptions.create(
         model="whisper-1", 
@@ -83,21 +84,7 @@ def handle_user_input(user_question):
         else:
             with st.chat_message(name="assistant", avatar="🤖"):
                 st.write(message.content)
-    get_responses(message.content, end-start)
-
-    def get_responses(response, duration, model='gpt-4'):
-        fpath = './data/responses.csv'
-        cols = ['response', 'duration', 'model']
-
-        if not os.path.exists(fpath):
-            with open(fpath, 'w', encoding='utf-8', newline='') as file:
-                writer = csv.DictWriter(file, fieldnames=cols)
-                writer.writeheader()
-
-        with open(fpath, 'a', newline='', encoding='utf-8') as file:
-            writer = csv.DictWriter(file, fieldnames=cols)
-            writer.writerow({"response": response, "duration": duration, "model": model})
-
+                
 
 def main():
     load_dotenv()
@@ -130,7 +117,8 @@ def main():
         if audio_files:
             file_paths = []
             for audio_file in audio_files:
-                pass
+                file_paths.append(process_audio_file(audio_file))
+
         if st.button("Process"):
             with st.spinner("Processing"):
             
@@ -139,8 +127,8 @@ def main():
                 if audio_files:
                     for file_path in file_paths:
                         transcript.append(get_transcript(file_path))
-                
-                
+                    
+                print(transcript)    
                 # get pdf text
                 if pdf_docs:
                     raw_text = get_pdf_text(pdf_docs)
