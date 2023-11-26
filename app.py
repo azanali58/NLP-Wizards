@@ -98,7 +98,12 @@ def main():
         pdf_docs = st.file_uploader("Upload your transcript PDFs here and click 'Process'", accept_multiple_files=True)
       
 
+        audio_files = st.file_uploader("Upload your meeting audio(s) here and click 'Process'", accept_multiple_files=True, type=["mp3"])
 
+        if audio_files:
+            file_paths = []
+            for audio_file in audio_files:
+                pass
         if st.button("Process"):
             with st.spinner("Processing"):
             
