@@ -107,6 +107,10 @@ def main():
         if st.button("Process"):
             with st.spinner("Processing"):
             
+                # get combined transcript
+                transcript = []
+                for file_path in file_paths:
+                        transcript.append(get_transcript(file_path))
                 # get pdf text
                 raw_text = get_pdf_text(pdf_docs)
 
