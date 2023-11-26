@@ -138,17 +138,19 @@ def main():
                 # get combined transcript
                 transcript = []
                 for file_path in file_paths:
-                        transcript.append(get_transcript(file_path))
+                    transcript.append(get_transcript(file_path))
+                
+                
                 # get pdf text
                 raw_text = get_pdf_text(pdf_docs)
-
+                transcript.append(raw_text)
                 # delete local copies
                 for file_path in file_paths:
                     delete_temp_file(file_path)
 
                 # get text chunks
-                text_chunks = get_text_chunks(raw_text)
-               
+                #text_chunks = get_text_chunks(raw_text)
+                text_chunks = get_text_chunks("".join(transcript))               
                 # get vector store using embeddings
                 vector_store = get_vector_store(text_chunks)
 
